@@ -1,0 +1,95 @@
+defaults:  
+  - _self_  
+  - override hydra/hydra_logging: disabled  
+  - override hydra/job_logging: disabled  
+hydra:  
+  output_subdir: null  
+  run:  
+    dir: .
+
+#-----------------------------------------------------------------
+
+training:
+  tag: '' #Tag to append next to the 'Training-...'
+  device: cuda
+
+exp:
+  experiment_folder: 'experiments'
+  cse_mesh_name:  'smal' 
+  checkpoint_path_shape:   ''
+  checkpoint_path_texture: ''
+
+  # Data -- 
+  dataset_source: 'COP3D'
+  sequence_index: '1030_23106_17099'
+  frame_limit: 1000
+  train_split: 15
+  test_split: 0
+
+  # Frame optim general --
+  n_steps: 10_000
+  n_shape_steps: 10_000
+  batch_size: 32
+  image_size: 256
+  moving_camera: True
+  lr_pose: 5e-4
+  lr_betas: 1e-2
+  lr_texture: 1e-1
+  #Scheduler scene_optim
+  factor_pose: 0.3
+  milestones_pose: [8_000, 9_500]
+  factor_texture: 0.3
+  milestones_texture: [8_000, 9_500]
+  #Checkpoint frequency [Eval, model checkpoint]
+  checkpoint_freq: 1000
+
+  # Shape optim model --
+  init_pose: true
+  mlp_model:
+    _target_: model.pose_models.model_mlp.PoseMLP
+    mlp_n_layers: 3
+    mlp_hidd_dim: 64
+    mlp_activation: leaky_relu
+    pos_embedding_dim: 8
+    pos_embedding_mode: power_nls
+
+  #Texture optim model --
+  texture_mlp_model:
+    _target_: model.texture_models.model_duplex.TextureDuplex
+    n_layers: 2
+    num_samples: 64 #Number of sample along each ray
+    num_channels: 32 
+    vol_size: 64
+    scale: 0.03 #Shell scale
+    encode_direction: False
+    gain: 1.
+    opacity_init_bias: -5.
+    inject_noise_sigma: 0.
+    rays_jitter_near_far: False
+
+  #Loss weights ------------
+  #----- Losses ------------
+  l_optim_chamfer: 300.
+  l_optim_cse_kp: 5.
+  l_optim_color: 10.
+  l_optim_sparse_kp: 1.
+  # ----- Regularizers -----
+  l_arap_reg: 1
+  l_arap_fast_reg: 0.01
+  l_laplacian_reg: 10
+  l_tv_reg: 0
+
+  #Parameters of losses --
+    ##CSE-keypoint params
+  N_cse_kp: 1_000
+  cse_version: original
+  filter_cse_kps: True
+    ##Chamfer loss params
+  l_chamfer_config:
+    N_pts_sampled: 10_000
+    resample_freq: 1_000
+    weight_invisible: 0.05
+    ##Color loss params
+  l_color_config:
+    n_rays_per_image: -1
+    resolution_loss: 256
