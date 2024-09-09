@@ -1,6 +1,6 @@
 # Animal Avatar: Reconstructing Animatable 3D Animals from Casual Videos
 
-Code from the **ECCV 2024** paper: 
+Code from the **ECCV 2024 (Selected as an Oral)** paper: 
 
 **Animal Avatar: Reconstructing Animatable 3D Animals from Casual Videos.**
 
@@ -12,10 +12,11 @@ Code from the **ECCV 2024** paper:
 
 <img src="docs/teaser.png" style="width: 60%;">
 
-| [**Project Page**](https://remysabathier.github.io/animalavatar.github.io/) | [**ArXiv**](https://arxiv.org/abs/2403.17103) |
+| [**Project Page**](https://remysabathier.github.io/animalavatar.github.io/) | [**ArXiv**](https://arxiv.org/abs/2403.17103) | [**Code**](https://github.com/facebookresearch/AnimalAvatar?tab=readme-ov-file) | [**ECCV Oral**](https://eccv2024.ecva.net/virtual/2024/oral/1988) |
 
 
 ## News
+[**12.08.2024**] &#x1F389; **AnimalAvatar** is selected as an oral at ECCV 2024 ! Info [here](https://eccv2024.ecva.net/virtual/2024/oral/1988) <br>
 [**30.07.2024**] Initial code release <br>
 [**01.07.2024**] &#x1F389; **AnimalAvatar** is accepted at [ECCV 2024](https://eccv.ecva.net/) ! <br>
 
