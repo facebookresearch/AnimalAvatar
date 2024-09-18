@@ -339,12 +339,15 @@ class InputCop:
     def init_betas(self):
         if self._init_betas is None:
             assert self.dataset_source == "COP3D"
-            init_betas, init_betas_limbs = self.dataset.get_init_pose()
+            init_betas, init_betas_limbs = self.dataset.get_init_shape()
             self._init_betas = (torch.tensor(init_betas), torch.tensor(init_betas_limbs))
         return self._init_betas
 
 
 def get_input_cop_from_cfg(cfg: OmegaConf, device: str = "cuda") -> InputCop:
+    '''
+    Initialize an InputCop instance from a config file.
+    '''
     ic = InputCop(
         sequence_index=cfg.exp.sequence_index,
         dataset_source=cfg.exp.dataset_source,
@@ -362,6 +365,9 @@ def get_input_cop_from_cfg(cfg: OmegaConf, device: str = "cuda") -> InputCop:
 
 
 def get_input_cop_from_archive(archive_path: str, device: str = "cuda") -> InputCop:
+    '''
+    Initialize an InputCop instance from the path of a reconstruction.
+    '''
 
     path = os.path.join(archive_path, "checkpoints/args.txt")
 

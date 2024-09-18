@@ -44,7 +44,7 @@ exp:
   checkpoint_freq: 1000
 
   # Shape optim model --
-  init_pose: true
+  init_shape: true
   mlp_model:
     _target_: model.pose_models.model_mlp.PoseMLP
     mlp_n_layers: 3

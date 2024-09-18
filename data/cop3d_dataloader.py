@@ -188,7 +188,7 @@ class COPSingleVideo(Dataset):
 
         return sparse_keypoints, scores
 
-    def get_init_pose(
+    def get_init_shape(
         self,
     ) -> tuple[np.ndarray, np.ndarray]:
         """
@@ -196,9 +196,9 @@ class COPSingleVideo(Dataset):
             - init_betas NPFLOAT32
             - init_betas_limbs NPFLOAT32
         """
-        init_pose_path = os.path.join(Keys().source_init_pose, f"{self.sequence_index}_init_pose.pk")
+        init_shape_path = os.path.join(Keys().source_init_shape, f"{self.sequence_index}_init_pose.pk")
 
-        with open(init_pose_path, "rb") as f:
+        with open(init_shape_path, "rb") as f:
             X = pk.load(f)
             init_betas, init_betas_limbs = X["betas"], X["betas_limbs"]
 

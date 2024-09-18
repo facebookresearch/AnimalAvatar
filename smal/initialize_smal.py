@@ -138,7 +138,7 @@ def process_original_smal(path_original: str, symmetry_json_path: str) -> dict[s
     save_dict["betas_scale_mask"] = get_beta_scale_mask()
 
     "1) faces (7774, 3)"
-    save_dict["faces"] = torch.Tensor(X_ori["f"]).type(torch.int64)
+    save_dict["faces"] = torch.Tensor(X_ori["f"].astype(np.int32)).type(torch.int64)
 
     "2) v_template (3889, 3)"
     save_dict["v_template"] = torch.Tensor(X_ori["v_template"]).type(torch.float32)

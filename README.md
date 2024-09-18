@@ -82,21 +82,20 @@ In **config/keys.py**, manually enter the path where you store external data, an
 
 ## Optimize a CoP3D scene
 
-The project was developed for the [CoP3D](https://github.com/facebookresearch/cop3d) dataset. Follow [instructions](https://github.com/facebookresearch/cop3d#download) to download the dataset.
+The project was developed for the [CoP3D](https://github.com/facebookresearch/cop3d) dataset. Follow [instructions](https://github.com/facebookresearch/cop3d#download) to download CoP3D.
+
+<img src="docs/preprocess.png" style="width: 60%;">
 
 ### 1- Preprocessing
 
-Process a video sequence to extract CSE embedding, sparse keypoints, ...
-
-<img src="docs/preprocess.png" style="width: 60%;">
+Before reconstructing a scene, you must preprocess the video sequence to extract a **CSE map** and a **root orientation** per frame.
 
 ```python
 #Example code to process the CoP3D sequence "1030_23106_17099"
 python main_preprocess_scene.py -sequence_index "1030_23106_17099" --visualize
 ```
 
-For a subset of CoP3D scenes (list available in "config/keys.py"), we provide in **external_data/** refined masks, init pose and sparse keypoints per frame.
-
+A visualization of the processed CSE map and root orientation is saved in the preprocessing folder. For a subset of CoP3D scenes (list available in "config/keys.py"), we provide in **external_data/** refined masks, init shape and sparse keypoints per frame.
 
 ### 2- Launch Reconstruction (Optimizer)
 
@@ -130,11 +129,11 @@ python main_visualize_reconstruction.py  "path_of_the_reconstruction_folder"
 To launch **AnimalAvatar** on a custom video, fill **CustomSingleVideo** in *data/custom_dataloader.py* with your data, and launch AnimalAvatar with 'CUSTOM' dataset option:
 
 ```python
-# 1- Preprocess the custom scene
+# 1- Preprocess the custom scene (to get CSE map and root orientation per frame)
 python main_preprocess_scene.py -sequence_index "XXX_XXX_XXX" --custom --visualize
 # 2- Launch the reconstruction
 python main_optimize_scene.py 'exp.sequence_index="XXX_XXX_XXX"' 'exp.dataset_source="CUSTOM"' 'exp.l_optim_sparse_kp=0'
-# 3- Launch Visualization
+# 3- Visualize the reconstruction
 python main_visualize_reconstruction.py "path_of_the_custom_reconstruction_folder" --custom
 ```
 

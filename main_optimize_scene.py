@@ -100,7 +100,7 @@ def main_train(cfg):
             texture_model = texture_model.to(device)
 
     if pose_model is None:
-        if cfg.exp.init_pose:
+        if cfg.exp.init_shape:
             init_betas, init_betas_limbs = ic.init_betas
         else:
             init_betas, init_betas_limbs = None, None
@@ -128,6 +128,7 @@ def main_train(cfg):
     logger.add_ext_logs({"time": [start, start]})
     torch.cuda.reset_peak_memory_stats()
 
+    # Initialize the scene optimizer
     scene_optimizer = SceneOptimizer(
         cameras,
         images,
@@ -146,7 +147,7 @@ def main_train(cfg):
         cfg.exp,
     )
 
-    # The main optimization loop
+    # Optimization loop
     scene_optimizer.optimize_scene(
         N_epochs=cfg.exp.n_steps,
         pose_model=pose_model,

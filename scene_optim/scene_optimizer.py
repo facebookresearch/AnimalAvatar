@@ -64,11 +64,11 @@ class SceneOptimizer:
             - cameras PerspectiveCameras (BATCH,)
             - images (BATCH, H_render, W_render, 3) TORCHFLOAT32 [0,1]
             - masks (BATCH, H_render, W_render, 1) TORCHINT32 {0,1}
-            - cse_keypoints_xy (BATCH, N_kps, 2) TORCHFLOAT32 [0,1]
+            - cse_keypoints_xy (BATCH, N_kps, 2) TORCHFLOAT32 [0,1], (0,0) top-left
             - cse_keypoints_vert_id (BATCH, N_kps) TORCHINT64
             - cse_valid_indices (N_valid,) TORCHINT32
             - cse_max_indices (N_valid,) TORCHINT32
-            - sparse_keypoints (BATCH, N_KPS, 2) TORCHFLOAT32 [0,1]
+            - sparse_keypoints (BATCH, N_KPS, 2) TORCHFLOAT32 [0,1], (0,0) top-left
             - sparse_keypoints_scores (BATCH, N_KPS, 1) TORCHFLOAT32 [0,1]
         """
 
