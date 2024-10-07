@@ -53,43 +53,10 @@ class InputCop:
         self.moving_camera = moving_camera
         self.train_test_split = train_test_split
         self.cse_version = cse_version
-
         self.normalize_cse = True
 
         assert self.cse_mesh_name in ["cse", "smal"]
         assert dataset_source in ["COP3D", "CUSTOM"]
-
-        self._X_ind_train = None
-        self._X_ind_test = None
-        self._X_ts_train = None
-        self._X_ts_test = None
-
-        self._cameras_original = None
-        self._cameras_canonical = None
-        self._cameras = None
-
-        self._dataset = None
-        self._images_hr = None
-        self._masks_hr = None
-        self._images = None
-        self._masks = None
-        self._original_resolution = None
-
-        self._cproc = None
-        self._cse_embedding = None
-        self._cse_maps = None
-        self._cse_keypoints = None
-        self._cse_closest_verts = None
-
-        self._sparse_keypoints = None
-
-        self._geodesic_distance_mesh = None
-
-        self._renderer = None
-        self._smal = None
-        self._texture = None
-
-        self._init_betas = None
 
     @property
     def N_frames_synth(self):
@@ -117,43 +84,43 @@ class InputCop:
 
     @property
     def X_ind_train(self):
-        if self._X_ind_train is None:
+        if getattr(self, "_X_ind_train", None) is None:
             self._X_ind_train, self._X_ind_test = train_test_split_frames(self.X_ind, self.train_test_split[0], self.train_test_split[1])
         return self._X_ind_train
 
     @property
     def X_ind_test(self):
-        if self._X_ind_test is None:
+        if getattr(self, "_X_ind_test", None) is None:
             self._X_ind_train, self._X_ind_test = train_test_split_frames(self.X_ind, self.train_test_split[0], self.train_test_split[1])
         return self._X_ind_test
 
     @property
     def X_ts_train(self):
-        if self._X_ts_train is None:
+        if getattr(self, "_X_ts_train", None) is None:
             self._X_ts_train, self._X_ts_test = train_test_split_frames(self.X_ts, self.train_test_split[0], self.train_test_split[1])
         return self._X_ts_train
 
     @property
     def X_ts_test(self):
-        if self._X_ts_test is None:
+        if getattr(self, "_X_ts_test", None) is None:
             self._X_ts_train, self._X_ts_test = train_test_split_frames(self.X_ts, self.train_test_split[0], self.train_test_split[1])
         return self._X_ts_test
 
     @property
     def cameras_original(self):
-        if self._cameras_original is None:
+        if getattr(self, "_cameras_original", None) is None:
             self._cameras_original = self.dataset.get_cameras(list(range(self.N_frames_synth)))
         return self._cameras_original
 
     @property
     def cameras_canonical(self):
-        if self._cameras_canonical is None:
+        if getattr(self, "_cameras_canonical", None) is None:
             self._cameras_canonical = cameras_from_metadatas(self.cameras_original, device="cpu", original_cameras=False)[list(range(self.N_frames_synth))]
         return self._cameras_canonical
 
     @property
     def cameras(self):
-        if self._cameras is None:
+        if getattr(self, "_cameras", None) is None:
 
             X_cameras_moving = cameras_from_metadatas(self.cameras_original, device="cpu", original_cameras=True)
 
@@ -174,7 +141,7 @@ class InputCop:
 
     @property
     def dataset(self):
-        if self._dataset is None:
+        if getattr(self, "_dataset", None) is None:
             if self.dataset_source == "COP3D":
                 self._dataset = COPSingleVideo(
                     cop3d_root_path=Keys().dataset_root,
@@ -195,7 +162,7 @@ class InputCop:
         Returns:
             - images_hr (BATCH, H, W, 3) TORCHFLOAT32 [CPU] [0,1] OR List( TORCHFLOAT32(1,H_i,W_i,3)[CPU] )
         """
-        if self._images_hr is None:
+        if getattr(self, "_images_hr", None) is None:
             self._images_hr = self.dataset.get_imgs_rgb(list(range(self.N_frames_synth)))
             if type(self._images_hr) == list:
                 self._images_hr = [torch.tensor(x).type(torch.float32) for x in self._images_hr]
@@ -205,7 +172,7 @@ class InputCop:
 
     @property
     def original_resolution(self):
-        if self._original_resolution is None:
+        if getattr(self, "_original_resolution", None) is None:
             self._original_resolution = (int(self.images_hr.shape[1]), int(self.images_hr.shape[2]))
         return self._original_resolution
 
@@ -215,7 +182,7 @@ class InputCop:
         Returns:
             - masks_hr (BATCH, H, W, 1) TORCHFLOAT32 [CPU] {0,1} OR List( TORCHUINT8(1,H_i,W_i,1)[CPU] )
         """
-        if self._masks_hr is None:
+        if getattr(self, "_masks_hr", None) is None:
             self._masks_hr = self.dataset.get_masks(list(range(self.N_frames_synth)))
             if type(self._masks_hr) == list:
                 self._masks_hr = [torch.tensor(x) for x in self._masks_hr]
@@ -228,7 +195,7 @@ class InputCop:
         """
         (BATCH, image_size, image_size, 3) TORCHFLOAT32 [0.<->1.]
         """
-        if self._images is None:
+        if getattr(self, "_images", None) is None:
             self._images = imutil.resize_torch(self.images_hr, (self.image_size, self.image_size))
         return self._images
 
@@ -237,13 +204,13 @@ class InputCop:
         """
         (BATCH, image_size, image_size, 1) TORCHINT32 {0,1}
         """
-        if self._masks is None:
+        if getattr(self, "_masks", None) is None:
             self._masks = (imutil.resize_torch(self.masks_hr, (self.image_size, self.image_size)) > 0.7).type(torch.int32)
         return self._masks
 
     @property
     def cproc(self):
-        if self._cproc is None:
+        if getattr(self, "_cproc", None) is None:
             self._cproc = CseProcessing(
                 cse_data_root_path=Keys().preprocess_path_cse,
                 sequence_index=self.sequence_index,
@@ -254,13 +221,13 @@ class InputCop:
 
     @property
     def cse_embedding(self):
-        if self._cse_embedding is None:
+        if getattr(self, "_cse_embedding", None) is None:
             self._cse_embedding = self.cproc.get_cse_embedding(convert_mesh_name=self.cse_mesh_name, normalize=self.normalize_cse)
         return self._cse_embedding
 
     @property
     def cse_maps(self):
-        if self._cse_maps is None:
+        if getattr(self, "_cse_maps", None) is None:
             cse_maps, cse_masks, valid_indices = self.cproc.get_cse_maps(
                 normalize=self.normalize_cse,
                 output_resolution=(self.image_size, self.image_size),
@@ -275,7 +242,7 @@ class InputCop:
 
     @property
     def cse_closest_verts(self):
-        if self._cse_closest_verts is None:
+        if getattr(self, "_cse_closest_verts", None) is None:
 
             (cse_maps, cse_masks, _) = self.cse_maps
 
@@ -285,7 +252,7 @@ class InputCop:
 
     @property
     def cse_keypoints(self):
-        if self._cse_keypoints is None:
+        if getattr(self, "_cse_keypoints", None) is None:
 
             (cse_maps, cse_masks, valid_indices) = self.cse_maps
             cse_masks = cse_masks * self.masks
@@ -306,38 +273,38 @@ class InputCop:
 
     @property
     def sparse_keypoints(self):
-        if self._sparse_keypoints is None:
+        if getattr(self, "_sparse_keypoints", None) is None:
             sparse_keypoints, sparse_keypoints_scores = self.dataset.get_sparse_keypoints(list(range(self.N_frames_synth)))
             self._sparse_keypoints = torch.tensor(sparse_keypoints), torch.tensor(sparse_keypoints_scores)
         return self._sparse_keypoints
 
     @property
     def renderer(self):
-        if self._renderer is None:
+        if getattr(self, "_renderer", None) is None:
             self._renderer = Renderer(self.image_size)
         return self._renderer
 
     @property
     def smal(self):
-        if self._smal is None:
+        if getattr(self, "_smal", None) is None:
             self._smal = get_smal_model(self.device)
         return self._smal
 
     @property
     def texture(self):
-        if self._texture is None:
+        if getattr(self, "_texture", None) is None:
             self._texture = torch.tensor(templutil.get_mesh_2d_embedding_from_name(self.cse_mesh_name)).type(torch.float32)
         return self._texture
 
     @property
     def geodesic_distance_mesh(self):
-        if self._geodesic_distance_mesh is None:
+        if getattr(self, "_geodesic_distance_mesh", None) is None:
             self._geodesic_distance_mesh = torch.tensor(get_geodesic_distance_from_name(self.cse_mesh_name, Keys().source_cse_folder))
         return self._geodesic_distance_mesh
 
     @property
     def init_betas(self):
-        if self._init_betas is None:
+        if getattr(self, "_init_betas", None) is None:
             assert self.dataset_source == "COP3D"
             init_betas, init_betas_limbs = self.dataset.get_init_shape()
             self._init_betas = (torch.tensor(init_betas), torch.tensor(init_betas_limbs))
