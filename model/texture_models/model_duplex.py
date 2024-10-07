@@ -53,7 +53,9 @@ class TextureDuplex(nn.Module):
 
     def __init__(
         self,
-        n_layers: int = 2,
+        n_layers_trunk: int = 3,
+        n_layers_color: int = 1,
+        n_layers_opacity: int = 1,
         num_samples: int = 192,
         num_channels: int = 16,
         vol_size: int = 128,
@@ -78,9 +80,9 @@ class TextureDuplex(nn.Module):
             color_chn=3,
             grid_chn=num_channels,
             mlp_hidden_chn=num_channels,
-            mlp_n_layers_opacity=n_layers,
-            mlp_n_layers_trunk=n_layers,
-            mlp_n_layers_color=n_layers,
+            mlp_n_layers_trunk=n_layers_trunk,
+            mlp_n_layers_opacity=n_layers_opacity,
+            mlp_n_layers_color=n_layers_color,
             enable_direction_dependent_colors=encode_direction,
             ray_embedding_num_harmonics=3 if encode_direction else None,
             gain=gain,

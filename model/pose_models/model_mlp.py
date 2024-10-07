@@ -93,7 +93,13 @@ class PoseMLP(PoseBase):
         self.mlp_n_layers = mlp_n_layers
         self.mlp_hidden_dim = mlp_hidd_dim
 
-        self.model = MLP(input_dimension=self.input_dim, nb_layers=self.mlp_n_layers, embedding_dimension=self.mlp_hidden_dim, output_dimension=self.output_dim, activ=mlp_activation)
+        self.model = MLP(
+            input_dimension=self.input_dim,
+            nb_layers=self.mlp_n_layers,
+            embedding_dimension=self.mlp_hidden_dim,
+            output_dimension=self.output_dim,
+            activ=mlp_activation,
+        )
 
     def forward(self, x: torch.Tensor):
         if x.device != self.betas.device:

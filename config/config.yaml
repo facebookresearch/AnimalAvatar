@@ -56,7 +56,9 @@ exp:
   #Texture optim model --
   texture_mlp_model:
     _target_: model.texture_models.model_duplex.TextureDuplex
-    n_layers: 2
+    n_layers_trunk: 3
+    n_layers_opacity: 1
+    n_layers_color: 1
     num_samples: 64 #Number of sample along each ray
     num_channels: 32 
     vol_size: 64

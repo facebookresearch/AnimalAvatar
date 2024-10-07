@@ -75,14 +75,13 @@ External data folder should look as follows:
 │   │   └── texture_smal.pk
 ```
 
+The project was developed for the [CoP3D](https://github.com/facebookresearch/cop3d) dataset. Follow [instructions](https://github.com/facebookresearch/cop3d#download) to download CoP3D.
+
 ## Set-up paths
 
 In **config/keys.py**, manually enter the path where you store external data, and the path of the CoP3D dataset on your machine.
 
-
 ## Optimize a CoP3D scene
-
-The project was developed for the [CoP3D](https://github.com/facebookresearch/cop3d) dataset. Follow [instructions](https://github.com/facebookresearch/cop3d#download) to download CoP3D.
 
 <img src="docs/preprocess.png" style="width: 60%;">
 
