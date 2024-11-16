@@ -155,11 +155,12 @@ See the LICENSE file for details about the license under which this code is made
 ## Citation
 
 ```
-@article{Sabathier2024AnimalAR,
-  title={Animal Avatars: Reconstructing Animatable {3D} Animals from Casual Videos},
-  author={Remy Sabathier and Niloy Jyoti Mitra and David Novotny},
-  journal={ArXiv},
-  year={2024},
-  volume={abs/2403.17103},
+@inproceedings{AnimalAvatars2024,
+author = {Sabathier, Remy and Mitra, Niloy J. and Novotny, David},
+title = {Animal Avatars: Reconstructing Animatable 3D Animals from Casual Videos},
+year = {2024},
+booktitle = {Computer Vision – ECCV 2024: 18th European Conference, Milan, Italy, September 29–October 4, 2024, Proceedings, Part LXXIX},
+pages = {270–287},
+doi = {10.1007/978-3-031-72986-7_16}
 }
 ```
