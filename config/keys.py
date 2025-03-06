@@ -12,8 +12,8 @@ File path to update:
     - EXTERNAL_DATA_PATH: Where we store scene preprocessings
     - COP3D_DATA_ROOT_PATH: Path of the CoP3D dataset
 """
-EXTERNAL_DATA_PATH = None
-COP3D_DATA_ROOT_PATH = None
+EXTERNAL_DATA_PATH = "external_data"
+COP3D_DATA_ROOT_PATH = "cop3d_data"
 
 
 assert EXTERNAL_DATA_PATH is not None, "EXTERNAL_DATA_PATH missing in 'config/keys.py, please manually add it'"

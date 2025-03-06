@@ -1,0 +1,47 @@
+{
+    "name": "AnimalAvatar",
+    "build": {
+        "dockerfile": "Dockerfile",
+        "context": ".."
+    },
+    "postStartCommand": "echo 'Development container started!'",
+    "customizations": {
+        "vscode": {
+            "extensions": [
+                "ms-python.python",
+                "ms-python.pylance",
+                "charliermarsh.ruff",
+                "ms-vscode.test-adapter-converter",
+                "ms-python.pytest-adapter",
+                "nvidia.nsight-vscode-edition",
+                "ms-azuretools.vscode-docker",
+                "ms-toolsai.jupyter-renderers",
+                "ms-toolsai.jupyter",
+                "ms-toolsai.jupyter-keymap"
+            ],
+            "settings": {
+                "terminal.integrated.showOnStartup": true,
+                "terminal.integrated.defaultProfile.linux": "bash",
+                "editor.codeActionsOnSave": {
+                    "source.fixAll.ruff": false,
+                    "source.organizeImports.ruff": false
+                },
+                "[python]": {
+                    "editor.defaultFormatter": "charliermarsh.ruff",
+                    "editor.formatOnSave": false,
+                    "editor.rulers": [
+                        100
+                    ]
+                }
+            }
+        }
+    },
+    "runArgs": [
+        "--interactive",
+        "--net=host",
+        "--ipc=host",
+        "--gpus=all",
+        "--runtime=nvidia"
+    ],
+    "remoteUser": "root"
+}
