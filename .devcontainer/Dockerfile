@@ -47,7 +47,7 @@ RUN git clone https://github.com/OliEfr/lightplane.git && cd lightplane && pip i
 RUN pip install git+https://github.com/facebookresearch/detectron2@main#subdirectory=projects/DensePose
 
 # Others
-RUN pip install pandas sqlalchemy plotly hydra-core tensorboard lpips opencv-python imageio[ffmpeg] numpy==1.24.3
+RUN pip install pandas sqlalchemy plotly hydra-core tensorboard lpips opencv-python imageio[ffmpeg] numpy==1.24.3 triton==2.1.0
 
 
 WORKDIR /home
