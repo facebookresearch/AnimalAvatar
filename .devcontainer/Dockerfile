@@ -25,6 +25,11 @@ RUN update-alternatives --install /usr/bin/python3 python3 /usr/bin/python3.10 1
 ENV NVIDIA_VISIBLE_DEVICES ${NVIDIA_VISIBLE_DEVICES:-all}
 ENV NVIDIA_DRIVER_CAPABILITIES ${NVIDIA_DRIVER_CAPABILITIES:+$NVIDIA_DRIVER_CAPABILITIES,}graphics
 
+# Create and activate a virtual environment
+RUN python -m venv /opt/venv
+ENV PATH="/opt/venv/bin:$PATH"
+RUN echo 'source /opt/venv/bin/activate' >> ~/.bashrc
+
 # pytorch
 RUN pip install torch==2.0.1 torchvision==0.15.2 torchaudio==2.0.2 --index-url https://download.pytorch.org/whl/cu118
 
@@ -47,12 +52,7 @@ RUN git clone https://github.com/OliEfr/lightplane.git && cd lightplane && pip i
 RUN pip install git+https://github.com/facebookresearch/detectron2@main#subdirectory=projects/DensePose
 
 # Others
-RUN pip install pandas sqlalchemy plotly hydra-core tensorboard lpips opencv-python imageio[ffmpeg] numpy==1.24.3 triton==2.1.0
+RUN pip install pandas sqlalchemy plotly hydra-core tensorboard lpips opencv-python imageio[ffmpeg] numpy==1.24.3
 
 
 WORKDIR /home
-
-
-
-
-

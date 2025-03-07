@@ -4,6 +4,7 @@
         "dockerfile": "Dockerfile",
         "context": ".."
     },
+    "postCreateCommand": "pip install triton==2.1.0",
     "postStartCommand": "echo 'Development container started!'",
     "customizations": {
         "vscode": {
@@ -20,6 +21,8 @@
                 "ms-toolsai.jupyter-keymap"
             ],
             "settings": {
+                "python.defaultInterpreterPath": "/opt/venv/bin/python",
+                "python.terminal.activateEnvironment": true,
                 "terminal.integrated.showOnStartup": true,
                 "terminal.integrated.defaultProfile.linux": "bash",
                 "editor.codeActionsOnSave": {

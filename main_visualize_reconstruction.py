@@ -6,11 +6,15 @@
 
 import os
 import argparse
+import torch
 from data.input_cop import get_input_cop_from_archive
 from model.inferencer import Inferencer
 import rendering.visualization as viz
 import rendering.visualization_renderer as vizrend
 from scene_optim.callbacks import CallbackEval
+
+from model.pose_models import compute_pose
+from pytorch3d.io import save_obj
 
 
 def visualize_reconstruction(archive_path: str, device: str = "cuda"):
@@ -35,6 +39,14 @@ def visualize_reconstruction(archive_path: str, device: str = "cuda"):
     inferencer = Inferencer(archive_path, use_archived_code=True)
     pose_model = inferencer.load_pose_model().to(device)
     texture_model = inferencer.load_texture_model().to(device)
+    
+    with torch.no_grad():
+        vertices, _, faces = compute_pose(smal, pose_model, X_ind, X_ts)
+    mesh_save_path = os.path.join(archive_path, "meshes")
+    os.makedirs(mesh_save_path, exist_ok=True)
+    for i in range(len(vertices)):
+        save_obj(os.path.join(mesh_save_path, f"test_{i}.obj"), vertices[i], faces[i])
+        
 
     # -- STATS
     callback_eval = CallbackEval(images, masks, cameras, smal, cse_embedding, image_size, device)
