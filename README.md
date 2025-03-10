@@ -90,11 +90,13 @@ In **config/keys.py**, manually enter the path where you store external data, an
 Before reconstructing a scene, you must preprocess the video sequence to extract a **CSE map** and a **root orientation** per frame.
 
 ```python
-#Example code to process the CoP3D sequence "1030_23106_17099"
-python main_preprocess_scene.py -sequence_index "1030_23106_17099" --visualize
+#Example code to process the CoP3D sequence "565_81664_160332"
+python main_preprocess_scene.py -sequence_index "565_81664_160332" --visualize
 ```
 
 A visualization of the processed CSE map and root orientation is saved in the preprocessing folder. For a subset of CoP3D scenes (list available in "config/keys.py"), we provide in **external_data/** refined masks, init shape and sparse keypoints per frame.
+
+(Adjust DB like in `adapt_database.sh)
 
 ### 2- Launch Reconstruction (Optimizer)
 
@@ -105,7 +107,7 @@ To launch the optimization on a CoP3D scene:
 
 ```python
 #Example code to optimize the CoP3D sequence "1030_23106_17099" and save it in folder experiments/
-python main_optimize_scene.py 'exp.sequence_index="1030_23106_17099"' 'exp.experiment_folder="experiments"'
+python main_optimize_scene.py 'exp.sequence_index="565_81664_160332"' 'exp.experiment_folder="experiments"'
 ```
 
 Parameters of the reconstruction are accessible in the config file config/config.yaml
