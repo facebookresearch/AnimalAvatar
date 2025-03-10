@@ -17,6 +17,25 @@ from model.pose_models import compute_pose
 from pytorch3d.io import save_obj
 
 
+def save_skeleton_with_edges_to_obj_pytorch3d(points, edges, filename="skeleton_with_edges.obj"):
+    """
+    Save 3D skeleton points with edges as an OBJ file using PyTorch3D.
+    
+    points: (N, 3) numpy array of 3D coordinates
+    edges: List of (i, j) tuples defining connections
+    filename: Output OBJ filename
+    """
+    # Convert points to PyTorch tensor
+    verts = torch.tensor(points, dtype=torch.float32)
+
+    # Convert edges to a faces tensor (lines are saved as degenerate triangles)
+    faces = torch.tensor(edges, dtype=torch.int64) if edges else torch.empty((0, 3), dtype=torch.int64)
+
+    # Save OBJ
+    save_obj(filename, verts, faces)
+
+    print(f"Saved {filename}")
+    
 def visualize_reconstruction(archive_path: str, device: str = "cuda"):
 
     # Load inputs
@@ -39,14 +58,18 @@ def visualize_reconstruction(archive_path: str, device: str = "cuda"):
     inferencer = Inferencer(archive_path, use_archived_code=True)
     pose_model = inferencer.load_pose_model().to(device)
     texture_model = inferencer.load_texture_model().to(device)
-    
+
     with torch.no_grad():
-        vertices, _, faces = compute_pose(smal, pose_model, X_ind, X_ts)
+        vertices, keypoints_3d, faces = compute_pose(smal, pose_model, X_ind, X_ts)
     mesh_save_path = os.path.join(archive_path, "meshes")
+    keypoints_save_path = os.path.join(archive_path, "keypoints")
     os.makedirs(mesh_save_path, exist_ok=True)
+    os.makedirs(keypoints_save_path, exist_ok=True)
     for i in range(len(vertices)):
         save_obj(os.path.join(mesh_save_path, f"test_{i}.obj"), vertices[i], faces[i])
-        
+    edges = [(i, i+1, i+1) for i in range(23)]  
+    for i in range(len(keypoints_3d)):
+        save_skeleton_with_edges_to_obj_pytorch3d(keypoints_3d[i], edges, os.path.join(keypoints_save_path, f"keypoints_{i}.obj"))
 
     # -- STATS
     callback_eval = CallbackEval(images, masks, cameras, smal, cse_embedding, image_size, device)
