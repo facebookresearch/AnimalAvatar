@@ -129,6 +129,12 @@ python main_visualize_reconstruction.py  "path_of_the_reconstruction_folder"
 
 To launch **AnimalAvatar** on a custom video, fill **CustomSingleVideo** in *data/custom_dataloader.py* with your data, and launch AnimalAvatar with 'CUSTOM' dataset option:
 
+Notes:
+- either use `cop3d_resizing`, or have all inputs (masks, images) cropped to same HxW
+- see oliver's shape-of-motion repo for easy cropping commands
+- cropping seems not to hurt performance
+- NOT resizing seems to hurt performance -> resizing to COP3 800x800 is a good choice.
+
 ```python
 # 1- Preprocess the custom scene (to get CSE map and root orientation per frame)
 python main_preprocess_scene.py -sequence_index "XXX_XXX_XXX" --custom --visualize

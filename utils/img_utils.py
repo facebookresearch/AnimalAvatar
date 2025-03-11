@@ -26,7 +26,7 @@ def resize_torch(X: torch.Tensor, size: tuple[int, int], mode="bilinear") -> tor
     if len(X.shape) == 3:
         return F.interpolate(X.permute((2, 0, 1)).unsqueeze(0), (size[0], size[1]), mode=mode).permute((0, 2, 3, 1))[0]
     else:
-        return F.interpolate(X.permute((0, 3, 1, 2)), (size[0], size[1]), mode=mode).permute((0, 2, 3, 1))
+        return F.interpolate(X.permute((0, 3, 1, 2)), (size[0], size[1]), mode=mode).permute((0, 2, 3, 1)) # 1,112,112,16
 
 
 def resize_torch_bool(X: torch.Tensor, size: tuple[int, int], alpha: float = 0.5, mode: str = "bilinear") -> torch.Tensor:

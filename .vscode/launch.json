@@ -11,7 +11,7 @@
             "program": "${file}",
             "console": "integratedTerminal",
             // "args": ["experiments/Train-2025_06_03_15_41_58"] //main optimization
-            "args": ["-sequence_index", "565_81664_160332", "--visualize"], //preprocess
+            "args": ["-sequence_index", "565_81664_160332", "--visualize", "--recompute", "--custom"], //preprocess
             "justMyCode": false,
         }
     ]

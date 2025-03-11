@@ -88,7 +88,7 @@ class COPSingleVideo(Dataset):
         assert _is_valid_sequence_name(self.cop3d_dataset, self.sequence_index), f"Invalid sequence_index: {self.sequence_index}"
 
         # Preload the frames
-        self.sequence_frame_ids = [frame.frame_number for frame in self.cop3d_dataset.sequence_frames_in_order(self.sequence_index)]
+        self.sequence_frame_ids = [frame.frame_number for frame in self.cop3d_dataset.sequence_frames_in_order(self.sequence_index)] # list of frame_ids, eg [1,2,3 ...]
 
         if self.preload:
             self.sequence_frames_dict = {id_: self.cop3d_dataset[self.sequence_index, id_] for id_ in tqdm(self.sequence_frame_ids, desc="Loading COP3D frames ({})".format(self.sequence_index))}
@@ -146,28 +146,31 @@ class COPSingleVideo(Dataset):
             list_frames = [os.path.join(path_refined_masks, "frame{:06d}.png".format(self.sequence_frame_ids[i])) for i in list_items]
             mask_list = []
             for path_i in list_frames:
-                X = np.expand_dims(np.array(Image.open(path_i)).astype(np.uint8), 0)  # Add C dimension
+                X = np.expand_dims(np.array(Image.open(path_i)).astype(np.uint8), 0)  # Add C dimension, X is now (1,H,W) -> required for resize_image
                 if self.cop3d_resizing:
-                    X_resized = resize_image(X, 800, 800, mode="bilinear")[0].unsqueeze(0).numpy()
-                    mask_list.append(np.transpose(X_resized.astype(np.float32), (0, 2, 3, 1)))
+                    X_resized = resize_image(X, 800, 800, mode="bilinear")[0].unsqueeze(0).numpy() # X_resized is (1,1,800,800) (one more 1 is addedby .unsqueeze(0))
+                    mask_list.append(np.transpose(X_resized.astype(np.float32), (0, 2, 3, 1))) 
                 else:
                     X = np.expand_dims(X, 0)
                     mask_list.append(np.transpose(X.astype(np.float32), (0, 2, 3, 1)))
 
         mask_list = array_list_to_stack(mask_list)
-        return mask_list
+        return mask_list # mask_list is of shape (202, 483, 360, 1)
 
     def get_imgs_rgb(self, list_items: list[int]) -> np.ndarray:
+        # list_items is list of ints [0,1,2,3 ---]
         """
         Return:
             - img_list [N,H,W,3] NPFLOAT32 [0,1]
         """
         img_list = [np.transpose(self.__getitem__(i)[0].numpy().astype(np.float32), (0, 2, 3, 1)) for i in list_items]
         img_list = array_list_to_stack(img_list)
-        return img_list
+        return img_list # image is (N,H,W,3)
 
     def get_cameras(self, list_items: list[int]) -> PerspectiveCameras:
-        return join_cameras_as_batch([self.__getitem__(i)[2]["camera"] for i in list_items])
+        cameras = [self.__getitem__(i)[2]["camera"] for i in list_items]
+        # torch.save(cameras, "cop3d_data/dog/565_81664_160332/cameras/cameras.pt") # NOTE make sure all list_items includes to entire sequence!
+        return join_cameras_as_batch(cameras)
 
     def get_sparse_keypoints(self, list_items: list[int]) -> tuple[np.ndarray, np.ndarray]:
         """
