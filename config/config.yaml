@@ -44,7 +44,7 @@ exp:
   checkpoint_freq: 1000
 
   # Shape optim model --
-  init_shape: true
+  init_shape: true # false for custom dataset
   mlp_model:
     _target_: model.pose_models.model_mlp.PoseMLP
     mlp_n_layers: 3
@@ -74,7 +74,7 @@ exp:
   l_optim_chamfer: 300.
   l_optim_cse_kp: 5.
   l_optim_color: 10.
-  l_optim_sparse_kp: 1.
+  l_optim_sparse_kp: 1. # 0. for custom dataset
   # ----- Regularizers -----
   l_arap_reg: 1
   l_arap_fast_reg: 0.01

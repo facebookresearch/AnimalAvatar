@@ -147,7 +147,7 @@ class InputCop:
                     cop3d_root_path=Keys().dataset_root,
                     sequence_index=self.sequence_index,
                     cop3d_cropping=False,
-                    cop3d_resizing=True,
+                    cop3d_resizing=False,
                     preload=self.frame_limit > 50,
                 )
             elif self.dataset_source == "CUSTOM":

@@ -10,8 +10,15 @@
             "request": "launch",
             "program": "${file}",
             "console": "integratedTerminal",
-            // "args": ["experiments/Train-2025_06_03_15_41_58"] //main optimization
-            "args": ["-sequence_index", "565_81664_160332", "--visualize", "--recompute", "--custom"], //preprocess
+            // "args": ["experiments/Train-2025_06_03_15_41_58"] // viz
+            "args": [
+               "exp.sequence_index=\"565_81664_160332\"",
+               "exp.dataset_source=\"CUSTOM\"",
+               "exp.experiment_folder=\"experiments_customDL\"",
+               "exp.l_optim_sparse_kp=0",
+               "exp.init_shape=false"
+            ], //main optimization custom dataset
+            // "args": ["-sequence_index", "565_81664_160332", "--visualize", "--recompute", "--custom"], //preprocess
             "justMyCode": false,
         }
     ]
