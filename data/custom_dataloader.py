@@ -21,9 +21,9 @@ class CustomSingleVideo(Dataset):
     """
 
     def __init__(self, *args, **kwargs):
-        self.rgb_img_path = "/workspaces/AnimalAvatar/cop3d_data/dog/565_81664_160332/images"
+        self.rgb_img_path = "cop3d_data/dog/565_81664_160332/images"
         self.mask_path = "external_data/refined_masks/565_81664_160332"
-        self.camera_path = "/workspaces/AnimalAvatar/cop3d_data/dog/565_81664_160332/cameras/cameras.pt" # This is a List object containing PerspectiveCameras for each frame
+        self.camera_path = "cop3d_data/dog/565_81664_160332/cameras/cameras.pt" # This is a List object containing PerspectiveCameras for each frame
         
         self.sequence_frame_ids = []
         
