@@ -146,10 +146,10 @@ class COPSingleVideo(Dataset):
             list_frames = [os.path.join(path_refined_masks, "frame{:06d}.png".format(self.sequence_frame_ids[i])) for i in list_items]
             mask_list = []
             for path_i in list_frames:
-                X = np.expand_dims(np.array(Image.open(path_i)).astype(np.uint8), 0)  # Add C dimension, X is now (1,H,W) -> required for resize_image
+                X = np.expand_dims(np.array(Image.open(path_i)).astype(np.uint8), 0)  # np.expand_dims adds C dimension, X is now (C,H,W)=(1,488,363) -> required for resize_image // values of X are 0 or 1 for refined masks.
                 if self.cop3d_resizing:
-                    X_resized = resize_image(X, 800, 800, mode="bilinear")[0].unsqueeze(0).numpy() # X_resized is (1,1,800,800) (one more 1 is addedby .unsqueeze(0))
-                    mask_list.append(np.transpose(X_resized.astype(np.float32), (0, 2, 3, 1))) 
+                    X_resized = resize_image(X, 800, 800, mode="bilinear")[0].unsqueeze(0).numpy() # X_resized is (1,1,800,800) (one more 1 is added by .unsqueeze(0))
+                    mask_list.append(np.transpose(X_resized.astype(np.float32), (0, 2, 3, 1))) # reordering dimensions to (1,800,800,1)
                 else:
                     X = np.expand_dims(X, 0)
                     mask_list.append(np.transpose(X.astype(np.float32), (0, 2, 3, 1)))
@@ -165,7 +165,7 @@ class COPSingleVideo(Dataset):
         """
         img_list = [np.transpose(self.__getitem__(i)[0].numpy().astype(np.float32), (0, 2, 3, 1)) for i in list_items]
         img_list = array_list_to_stack(img_list)
-        return img_list # image is (N,H,W,3)
+        return img_list # image is (N,H,W,3), img values are in [0,1]
 
     def get_cameras(self, list_items: list[int]) -> PerspectiveCameras:
         cameras = [self.__getitem__(i)[2]["camera"] for i in list_items]

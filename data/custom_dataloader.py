@@ -12,6 +12,7 @@ from pytorch3d.renderer.cameras import PerspectiveCameras
 from pytorch3d.renderer.camera_utils import join_cameras_as_batch
 import utils.img_utils as imutil
 from utils.img_utils import resize_image
+from data.utils import array_list_to_stack
 
 
 class CustomSingleVideo(Dataset):
@@ -58,14 +59,13 @@ class CustomSingleVideo(Dataset):
         mask_list = []
         for idx in list_items:
             mask_path = os.path.join(self.mask_path, self.sequence_frame_ids[idx] + ".png")
-            X = np.array(Image.open(mask_path)).astype(np.uint8)
-            X = np.expand_dims(X, -1) # add C dimension, is now (H,W,1)
+            X = np.array(Image.open(mask_path)).astype(np.uint8) # HxW
+            X = np.expand_dims(X, 0) # add C dimension, is now (1,H,W,)
+            X_resized = resize_image(X, 800, 800, mode="bilinear")[0].unsqueeze(0).numpy()
 
-            # TODO cop3d dataloader always rescales to 800x800. This might be important for https://pytorch3d.readthedocs.io/en/latest/modules/renderer/cameras.html#pytorch3d.renderer.cameras.CamerasBase -> NDC coordinate system, but I didnt check this yet NOTE this needs TRANSPOSING as done in cop3d_dataloader.py
+            mask_list.append(np.transpose(X_resized.astype(np.float32), (0, 2, 3, 1))) # reordering dimensions to (1,800,800,1)
             
-            mask_list.append(X.astype(np.float32))
-            
-        return np.array(mask_list, dtype=np.float32) # has shape (202, 483, 360, 1)
+        return array_list_to_stack(mask_list) # has shape (202, 483, 360, 1)
         
     def get_imgs_rgb(self, list_items: list[int]) -> np.ndarray:
         """            
@@ -75,16 +75,17 @@ class CustomSingleVideo(Dataset):
         imgs_rgb = []
         for idx in list_items:
             img_path = os.path.join(self.rgb_img_path, self.sequence_frame_ids[idx] + ".jpg")
-            img = Image.open(img_path).convert("RGB")  # Ensure it's in RGB
+            img = Image.open(img_path)
+            img = np.true_divide(img, 255, dtype=np.float32) # (HxWx3)
+            
+            
+            img_resized = resize_image(np.transpose(img,(2,0,1)), 800, 800, mode="bilinear")[0].numpy()
+            
+            img_resized = np.transpose(img_resized.astype(np.float32), (1,2,0)) # (HxWx3)
+            
+            imgs_rgb.append(img_resized)
 
-            img = np.true_divide(img, 255, dtype=np.float32)
-            
-            # TODO cop3d dataloader always rescales to 800x800. This might be important for https://pytorch3d.readthedocs.io/en/latest/modules/renderer/cameras.html#pytorch3d.renderer.cameras.CamerasBase -> NDC coordinate system, but I didnt check this yet NOTE this might need TRANSPOSING as done in cop3d_dataloader.py
-            
-            
-            imgs_rgb.append(img)
-
-        return np.array(imgs_rgb, dtype=np.float32)
+        return np.array(imgs_rgb, dtype=np.float32) # has to be (N,H,W,3)
 
     def get_cameras(self, list_items: list[int]) -> PerspectiveCameras:
         """

@@ -137,7 +137,7 @@ Notes:
 
 ```python
 # 1- Preprocess the custom scene (to get CSE map and root orientation per frame)
-python main_preprocess_scene.py -sequence_index "XXX_XXX_XXX" --custom --visualize
+python main_preprocess_scene.py -sequence_index "XXX_XXX_XXX" --recompute --visualize --custom
 # 2- Launch the reconstruction
 python main_optimize_scene.py 'exp.sequence_index="XXX_XXX_XXX"' 'exp.dataset_source="CUSTOM"' 'exp.l_optim_sparse_kp=0'
 # 3- Visualize the reconstruction

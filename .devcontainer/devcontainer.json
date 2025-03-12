@@ -4,7 +4,7 @@
         "dockerfile": "Dockerfile",
         "context": ".."
     },
-    "postCreateCommand": "pip install triton==2.1.0",
+    // "postCreateCommand": "pip install triton==2.1.0",
     "postStartCommand": "echo 'Development container started!'",
     "customizations": {
         "vscode": {

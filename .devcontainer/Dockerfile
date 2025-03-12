@@ -54,5 +54,7 @@ RUN pip install git+https://github.com/facebookresearch/detectron2@main#subdirec
 # Others
 RUN pip install pandas sqlalchemy plotly hydra-core tensorboard lpips opencv-python imageio[ffmpeg] numpy==1.24.3
 
+RUN pip install triton==2.1.0
+
 
 WORKDIR /home
