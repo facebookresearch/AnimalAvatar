@@ -17,22 +17,36 @@ from model.pose_models import compute_pose
 from pytorch3d.io import save_obj
 
 
-def save_skeleton_with_edges_to_obj_pytorch3d(points, edges, filename="skeleton_with_edges.obj"):
+def save_skeleton_with_edges_to_obj_pytorch3d(points, edges, filename="skeleton_with_edges.obj", filter_point_of_interest=False):
     """
     Save 3D skeleton points with edges as an OBJ file using PyTorch3D.
     
     points: (N, 3) numpy array of 3D coordinates
-    edges: List of (i, j) tuples defining connections
+    edges: List of (i, j) tuples defining connections (as line segments)
     filename: Output OBJ filename
     """
+    # If filter_point_of_interest is True, select only the 0th, 3rd, 6th, 9th keypoints
+    if filter_point_of_interest:
+        points = points[[0, 3, 6, 9, 12, 22]]  # Assuming there are at least 10 keypoints
+    
     # Convert points to PyTorch tensor
     verts = torch.tensor(points, dtype=torch.float32)
 
-    # Convert edges to a faces tensor (lines are saved as degenerate triangles)
-    faces = torch.tensor(edges, dtype=torch.int64) if edges else torch.empty((0, 3), dtype=torch.int64)
+    # Prepare the OBJ file content
+    obj_content = []
 
-    # Save OBJ
-    save_obj(filename, verts, faces)
+    # Write vertices (v x y z)
+    for point in points:
+        obj_content.append(f"v {point[0]} {point[1]} {point[2]}")
+
+    # Write edges (l i j) as lines
+    if not filter_point_of_interest:
+        for (i, j) in edges:
+            obj_content.append(f"l {i+1} {j+1}")  # OBJ indexing starts from 1, not 0
+
+    # Write to the OBJ file
+    with open(filename, "w") as f:
+        f.write("\n".join(obj_content))
 
     print(f"Saved {filename}")
     
@@ -67,9 +81,10 @@ def visualize_reconstruction(archive_path: str, device: str = "cuda"):
     os.makedirs(keypoints_save_path, exist_ok=True)
     for i in range(len(vertices)):
         save_obj(os.path.join(mesh_save_path, f"test_{i}.obj"), vertices[i], faces[i])
-    edges = [(i, i+1, i+1) for i in range(23)]  
+    edges = [(i, i+1) for i in range(23)]  
     for i in range(len(keypoints_3d)):
         save_skeleton_with_edges_to_obj_pytorch3d(keypoints_3d[i], edges, os.path.join(keypoints_save_path, f"keypoints_{i}.obj"))
+        save_skeleton_with_edges_to_obj_pytorch3d(keypoints_3d[i], edges, os.path.join(keypoints_save_path, f"keypoints_tracks_{i}.obj"), filter_point_of_interest=True)
 
     # -- STATS
     callback_eval = CallbackEval(images, masks, cameras, smal, cse_embedding, image_size, device)
