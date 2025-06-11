@@ -170,12 +170,13 @@ class SceneOptimizer:
 
         # optimizer texture_model
         if texture_model.tag == TextureModelTags.TextureDuplex:
+            # NOTE set the following to None when you get infinite gradient in texture optimization. Do not forget to set the scheduler below to None as well!
             optimizer_texture = Adam([{"params": [texture_model.v], "lr": self.lr_texture}, {"params": texture_model.renderer.parameters(), "lr": 0.1 * self.lr_texture}])
         else:
             raise Exception("Unknown texture_model tag")
 
         # learning rate scheduler texture model
-        scheduler_texture = MultiStepLR(optimizer_texture, gamma=self.factor_texture, milestones=self.milestones_texture, last_epoch=-1)
+        scheduler_texture = MultiStepLR(optimizer_texture, gamma=self.factor_texture, milestones=self.milestones_texture, last_epoch=-1) # None
 
         return optimizer_pose, optimizer_texture, scheduler_pose, scheduler_texture
 

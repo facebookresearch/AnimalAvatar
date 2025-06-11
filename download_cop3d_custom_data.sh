@@ -37,3 +37,7 @@
 ## move custom masks to the correct location
 # mv 565_81664_160332 external_data/refined_masks/565_81664_160332 external_data/refined_masks
 
+####### maila
+curl -L https://nextcloud.in.tum.de/index.php/s/FDGbbwrzGGprDnY/download/maila.zip -o cop3d_data/maila.zip
+unzip cop3d_data/maila.zip -d cop3d_data
+rm cop3d_data/maila.zip
