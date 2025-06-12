@@ -8,6 +8,7 @@ import os
 import argparse
 import torch
 import numpy as np
+import open3d as o3d
 from scipy.spatial.transform import Rotation as R
 from scipy.optimize import minimize
 from data.input_cop import get_input_cop_from_archive
@@ -131,6 +132,7 @@ def visualize_reconstruction(archive_path: str, device: str = "cuda"):
     os.makedirs(mesh_save_path, exist_ok=True)
     os.makedirs(keypoints_save_path, exist_ok=True)
     os.makedirs(os.path.join(mesh_save_path, "pointclouds"), exist_ok=True)
+    os.makedirs(os.path.join(mesh_save_path, "pointclouds_colored"), exist_ok=True)
     os.makedirs(os.path.join(mesh_save_path, "meshes"), exist_ok=True)
 
     for i in range(len(vertices)):
@@ -139,8 +141,15 @@ def visualize_reconstruction(archive_path: str, device: str = "cuda"):
         save_obj(os.path.join(mesh_save_path, "meshes", f"test_{i}.obj"), mesh.verts_packed(), mesh.faces_packed())
         
         # save pointcloud
-        pointcloud = Pointclouds(points=vertices[i].unsqueeze(0))
+        pointcloud = Pointclouds(points=vertices[i].unsqueeze(0), features=texture.unsqueeze(0))
         save_ply(os.path.join(mesh_save_path, "pointclouds", f"test_{i}.ply"), pointcloud.points_packed())
+        
+        # save colored pointcloud
+        pcd = o3d.geometry.PointCloud()
+        pcd.points = o3d.utility.Vector3dVector(vertices[i].cpu().numpy())
+        pcd.colors = o3d.utility.Vector3dVector(texture.cpu().numpy() / 255)
+        o3d.io.write_point_cloud(os.path.join(mesh_save_path, "pointclouds_colored", f"test_{i}.ply"), pcd)
+        
     edges = [(i, i+1) for i in range(23)]  
     for i in range(len(keypoints_3d)):
         save_skeleton_with_edges_to_obj_pytorch3d(keypoints_3d[i], edges, os.path.join(keypoints_save_path, f"keypoints_{i}.obj"))
@@ -159,6 +168,7 @@ def visualize_reconstruction(archive_path: str, device: str = "cuda"):
 
     # -- STATS
     callback_eval = CallbackEval(images, masks, cameras, smal, cse_embedding, image_size, device)
+    
 
     final_eval, final_eval_str = callback_eval.call(pose_model, X_ind_test, X_ts_test, texture_model)
     print("Results: {}".format(final_eval_str))
@@ -168,6 +178,8 @@ def visualize_reconstruction(archive_path: str, device: str = "cuda"):
         vizrend.global_visualization(images, masks, pose_model, X_ind, X_ts, smal, texture_model, cse_embedding, renderer, cameras, texture=texture),
         os.path.join(archive_path, "rendered_optimized.mp4"),
     )
+    
+    pass
 
 
 if __name__ == "__main__":
