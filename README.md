@@ -39,8 +39,8 @@ pip install pandas sqlalchemy plotly hydra-core tensorboard lpips opencv-python 
 Please download [external_data/](https://github.com/RemySabathier/animalavatar.github.io/raw/main/external_data/external_data.zip) and add the following files to "external_data/" folder:
 
 Download SMAL model from ["BITE: Beyond priors for improved three-D dog pose estimation"](https://github.com/runa91/bite_release):
-* [my_smpl_39dogsnorm_newv3_dog.pkl](https://owncloud.tuebingen.mpg.de/index.php/s/BpPWyzsmfycXdyj/download?path=%2Fdata%2Fsmal_data%2Fnew_dog_models&files=my_smpl_39dogsnorm_newv3_dog.pkl&downloadStartSecret=21p5mlf8old)
-* [symmetry_inds.json](https://owncloud.tuebingen.mpg.de/index.php/s/BpPWyzsmfycXdyj/download?path=%2Fdata%2Fsmal_data&files=symmetry_inds.json&downloadStartSecret=ecjw1bt2rbv)
+* [my_smpl_39dogsnorm_newv3_dog.pkl](https://huggingface.co/Remy/AnimalAvatar/resolve/main/my_smpl_39dogsnorm_newv3_dog.pkl?download=true)
+* [symmetry_inds.json](https://huggingface.co/Remy/AnimalAvatar/resolve/main/symmetry_inds.json?download=true)
 
 Download Densepose model weight and configs:
 * [densepose_rcnn_R_50_FPN_soft_animals_I0_finetune_i2m_16k.yaml](https://raw.githubusercontent.com/facebookresearch/detectron2/main/projects/DensePose/configs/cse/densepose_rcnn_R_50_FPN_soft_animals_I0_finetune_i2m_16k.yaml)
