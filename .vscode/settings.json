@@ -1,0 +1,6 @@
+{
+    "python.terminal.activateEnvironment": false,
+    "githubPullRequests.ignoredPullRequestBranches": [
+        "main"
+    ]
+}

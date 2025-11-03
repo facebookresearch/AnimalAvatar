@@ -25,15 +25,15 @@ Code from the **ECCV 2024 (Selected as an Oral)** paper:
 
 The code was developed with python=3.10 | pytorch=2.0.1 | pytorch-cuda=11.8 <br>
 Install the following libs:
-1) [Install PyTorch](https://pytorch.org/get-started/locally/#start-locally).
-2) [Install PyTorch3D](https://github.com/facebookresearch/pytorch3d/blob/main/INSTALL.md)
-3) [Install Lightplane](https://github.com/facebookresearch/lightplane?tab=readme-ov-file#installation)
+1) [Install PyTorch](https://pytorch.org/get-started/locally/#start-locally): pip install torch==2.0.1 torchvision==0.15.2 torchaudio==2.0.2 --index-url https://download.pytorch.org/whl/cu118
+2) [Install PyTorch3D](https://github.com/facebookresearch/pytorch3d/blob/main/INSTALL.md): install from source, and checkout v0.7.7 to match pytorch version.
+3) [Install Lightplane](https://github.com/facebookresearch/lightplane?tab=readme-ov-file#installation): relax triton version in setup.py to 2.0.0 to be compatible with PyTorch3D.
 4) [Install DensePoseCSE](https://github.com/facebookresearch/detectron2/blob/main/projects/DensePose/doc/GETTING_STARTED.md#installation-as-a-package)
 
 Additional pip install:
 
 ```python
-pip install pandas sqlalchemy plotly hydra-core tensorboard lpips opencv-python imageio[ffmpeg]
+pip install pandas sqlalchemy plotly hydra-core tensorboard lpips opencv-python imageio[ffmpeg] numpy==1.24.3
 ```
 
 Please download [external_data/](https://github.com/RemySabathier/animalavatar.github.io/raw/main/external_data/external_data.zip) and add the following files to "external_data/" folder:
@@ -90,11 +90,13 @@ In **config/keys.py**, manually enter the path where you store external data, an
 Before reconstructing a scene, you must preprocess the video sequence to extract a **CSE map** and a **root orientation** per frame.
 
 ```python
-#Example code to process the CoP3D sequence "1030_23106_17099"
-python main_preprocess_scene.py -sequence_index "1030_23106_17099" --visualize
+#Example code to process the CoP3D sequence "565_81664_160332"
+python main_preprocess_scene.py -sequence_index "565_81664_160332" --visualize
 ```
 
 A visualization of the processed CSE map and root orientation is saved in the preprocessing folder. For a subset of CoP3D scenes (list available in "config/keys.py"), we provide in **external_data/** refined masks, init shape and sparse keypoints per frame.
+
+(Adjust DB like in `adapt_database.sh)
 
 ### 2- Launch Reconstruction (Optimizer)
 
@@ -105,7 +107,7 @@ To launch the optimization on a CoP3D scene:
 
 ```python
 #Example code to optimize the CoP3D sequence "1030_23106_17099" and save it in folder experiments/
-python main_optimize_scene.py 'exp.sequence_index="1030_23106_17099"' 'exp.experiment_folder="experiments"'
+python main_optimize_scene.py 'exp.sequence_index="565_81664_160332"' 'exp.experiment_folder="experiments"'
 ```
 
 Parameters of the reconstruction are accessible in the config file config/config.yaml
@@ -127,9 +129,15 @@ python main_visualize_reconstruction.py  "path_of_the_reconstruction_folder"
 
 To launch **AnimalAvatar** on a custom video, fill **CustomSingleVideo** in *data/custom_dataloader.py* with your data, and launch AnimalAvatar with 'CUSTOM' dataset option:
 
+Notes:
+- either use `cop3d_resizing`, or have all inputs (masks, images) cropped to same HxW
+- see oliver's shape-of-motion repo for easy cropping commands
+- cropping seems not to hurt performance
+- NOT resizing seems to hurt performance -> resizing to COP3 800x800 is a good choice.
+
 ```python
 # 1- Preprocess the custom scene (to get CSE map and root orientation per frame)
-python main_preprocess_scene.py -sequence_index "XXX_XXX_XXX" --custom --visualize
+python main_preprocess_scene.py -sequence_index "XXX_XXX_XXX" --recompute --visualize --custom
 # 2- Launch the reconstruction
 python main_optimize_scene.py 'exp.sequence_index="XXX_XXX_XXX"' 'exp.dataset_source="CUSTOM"' 'exp.l_optim_sparse_kp=0'
 # 3- Visualize the reconstruction

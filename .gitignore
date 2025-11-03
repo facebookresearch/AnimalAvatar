@@ -1,0 +1,4 @@
+external_data
+cop3d_data
+__pycache__
+experiments*

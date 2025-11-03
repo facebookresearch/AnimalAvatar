@@ -1,0 +1,25 @@
+{
+    // Use IntelliSense to learn about possible attributes.
+    // Hover to view descriptions of existing attributes.
+    // For more information, visit: https://go.microsoft.com/fwlink/?linkid=830387
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "name": "Python Debugger: Current File with Arguments",
+            "type": "debugpy",
+            "request": "launch",
+            "program": "${file}",
+            "console": "integratedTerminal",
+            // "args": ["experiments/Train-2025_06_03_15_41_58"] // viz
+            "args": [
+               "exp.sequence_index=\"slow_1313807000\"",
+               "exp.dataset_source=\"CUSTOM\"",
+               "exp.experiment_folder=\"experiments_maila\"",
+               "exp.l_optim_sparse_kp=0",
+               "exp.init_shape=false"
+            ], //main optimization custom dataset
+            // "args": ["-sequence_index", "slow_1313807000", "--visualize", "--recompute", "--custom"], //preprocess
+            "justMyCode": false,
+        }
+    ]
+}

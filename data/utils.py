@@ -39,4 +39,5 @@ def array_list_to_stack(array_list: list[np.ndarray]) -> list[np.ndarray] | np.n
     if same_array_shape:
         return np.concatenate(array_list, axis=0)
     else:
+        raise NotImplementedError("Different shapes not supported yet.")
         return array_list

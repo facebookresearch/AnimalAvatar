@@ -151,7 +151,11 @@ class InputCop:
                     preload=self.frame_limit > 50,
                 )
             elif self.dataset_source == "CUSTOM":
-                self._dataset = CustomSingleVideo()
+                self._dataset = CustomSingleVideo(
+                    device=self.device,
+                    cop3d_root_path=Keys().dataset_root,
+                    sequence_index=self.sequence_index,
+                )
             else:
                 raise Exception(f"Unknown dataset: {self.dataset_source}")
         return self._dataset
